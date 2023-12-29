@@ -1,4 +1,12 @@
-export default function Button({ className = '', disabled = false, children, ...props }: any) {
+import React, { ReactNode, ButtonHTMLAttributes } from 'react';
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+	className?: string;
+	disabled?: boolean;
+	children?: ReactNode;
+}
+
+const Button: React.FC<ButtonProps> = ({ className = '', disabled = false, children, ...props }) => {
 	return (
 		<button
 			className={`${
@@ -11,4 +19,6 @@ export default function Button({ className = '', disabled = false, children, ...
 			{children}
 		</button>
 	);
-}
+};
+
+export default Button;

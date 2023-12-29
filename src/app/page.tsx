@@ -9,16 +9,17 @@ import Button from '@/Components/Commons/Button';
 import { toast } from 'sonner';
 import { searchFilter } from '@/utils/search';
 import _ from 'lodash';
+import { SearchProps } from '@/types/components';
 
 export default function Home() {
 	const [data, setData] = useState<DataProps[]>([]);
 	const [dataCopy, setDataCopy] = useState<DataProps[]>([]);
 	const [buttonInfo, setButtonInfo] = useState<boolean>(false);
 
-	const [search, setSearch] = useState<any>({
+	const [search, setSearch] = useState<SearchProps>({
 		status: '',
 		search: '',
-		orderRtp: '',
+		orderRtp: 'asc',
 	});
 
 	useEffect(() => {
@@ -37,34 +38,30 @@ export default function Home() {
 	}, []);
 
 	const switchStatus = () => {
-		if (search.status === '') setSearch({ ...search, status: 'asc' });
-		if (search.status === 'asc') setSearch({ ...search, status: 'desc' });
-		if (search.status === 'desc') setSearch({ ...search, status: '' });
+		if (search.status === '') setSearch({ ...search, status: 'true' });
+		if (search.status === 'true') setSearch({ ...search, status: 'false' });
+		if (search.status === 'false') setSearch({ ...search, status: '' });
 	};
 
 	const switchOrder = () => {
-		if (search.orderRtp === '') setSearch({ ...search, orderRtp: 'asc' });
 		if (search.orderRtp === 'asc') setSearch({ ...search, orderRtp: 'desc' });
-		if (search.orderRtp === 'desc') setSearch({ ...search, orderRtp: '' });
+		if (search.orderRtp === 'desc') setSearch({ ...search, orderRtp: 'asc' });
 	};
 
 	useEffect(() => {
-		let newDataCopy = data;
+		let newDataCopy = [...data];
 
-		// Apply search filter
 		if (search.search !== '') {
 			newDataCopy = searchFilter(newDataCopy, search.search);
 		}
 
-		// Apply status filter
 		if (search.status !== '') {
-			newDataCopy = _.orderBy(newDataCopy, ['disabled'], [search.status]);
+			newDataCopy = newDataCopy.filter((item) => item.disabled === (search.status === 'true'));
 		}
 
-		// Apply order by RTP
-		if (search.orderRtp !== '') {
-			newDataCopy = _.orderBy(newDataCopy, ['info.rtp'], [search.orderRtp]);
-		}
+		const orderRtp = search.orderRtp || 'asc';
+
+		newDataCopy = _.orderBy(newDataCopy, ['info.rtp'], [orderRtp]);
 
 		setDataCopy(newDataCopy);
 	}, [data, search]);
@@ -82,13 +79,13 @@ export default function Home() {
 								onClick={switchStatus}
 								className="min-w-[180px] !max-w-full !h-auto rounded-xl !bg-[#091B50] hover:!bg-[#1f2e5c] !mt-0"
 							>
-								Status: {search.status === '' ? 'Normal' : search.status === 'asc' ? 'Active' : 'Disabled'}
+								Status: {search.status === '' ? 'All' : search.status === 'true' ? 'Disabled' : 'Active'}
 							</Button>
 							<Button
 								onClick={switchOrder}
 								className="min-w-[180px] !max-w-full !h-auto rounded-xl !bg-[#091B50] hover:!bg-[#1f2e5c] !mt-0"
 							>
-								Order RTP: {search.orderRtp === '' ? 'Normal' : search.orderRtp === 'asc' ? 'asc' : 'desc'}
+								Order RTP: {search.orderRtp === 'asc' ? 'asc' : 'desc'}
 							</Button>
 						</div>
 						<input

@@ -12,7 +12,7 @@ import { useState } from 'react';
 interface CardImageProps {
 	item: DataProps;
 	buttonInfo: boolean;
-	setButtonInfo: any;
+	setButtonInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CardImage({ item, buttonInfo, setButtonInfo }: CardImageProps) {
@@ -78,7 +78,7 @@ export default function CardImage({ item, buttonInfo, setButtonInfo }: CardImage
 						</div>
 					</div>
 				) : (
-					<div className='p-3.5' />
+					<div className="p-3.5" />
 				)}
 
 				{buttonInfo && (
